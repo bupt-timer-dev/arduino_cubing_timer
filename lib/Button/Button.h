@@ -6,8 +6,9 @@
 #define MODE_SIZE 6
 
 class Button {
-  int pin;
+  int pin, state, MODE;
   void (*events[MODE_SIZE])();
+  bool attached[MODE_SIZE];
 
   public:
   Button();

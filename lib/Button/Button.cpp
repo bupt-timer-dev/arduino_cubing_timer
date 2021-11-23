@@ -1,30 +1,30 @@
-#include <buttons.h>
-
+#include <Button.h>
+#include <utils.h>
 #include <Arduino.h>
 
-Buttons::Buttons() {
+Button::Button() {
   //
 }
 
-Buttons::Buttons(int _pin) {
+Button::Button(int _pin) {
   pinMode(_pin, INPUT);
   this->pin = _pin;
 }
 
-void Buttons::attach(int _pin) {
+void Button::attach(int _pin) {
   pinMode(_pin, INPUT);
   this->pin = _pin;
-  state=digitalRead(_pin);
+  state=getd(_pin);
 }
 
-void Buttons::attachEvent(int MODE, void (*_event)()){
+void Button::attachEvent(int MODE, void (*_event)()){
   this->attached[MODE] = true;
   this->events[MODE] = _event;
   
 }
 
-void Buttons::check(){
-  int _state = digitalRead(this->pin), event;
+void Button::check(){
+  int _state = getd(this->pin), event;
   if (_state!=state)
   {
     delay(20);
