@@ -9,4 +9,10 @@
 #define START_TOUCH 2
 #define STOP_TOUCH 3
 
+#define RISING 0x01
+#define FALLING 0x02
+#define CHANGE 0x03
+#define ONLOW 0x04
+#define ONHIGH 0x05
+
 #endif

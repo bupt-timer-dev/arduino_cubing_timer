@@ -5,17 +5,18 @@
 
 #define MODE_SIZE 6
 
-class Buttons {
+class Button {
   int pin;
   void (*events[MODE_SIZE])();
 
-  Buttons();
+  public:
+  Button();
 
-  Buttons(int _pin);
+  Button(int _pin);
 
   void attach(int _pin); //attach Buttons object to pin
   void attachEvent(int MODE, void (*_event)()); //attach function to specific event
-      //see also: Arduino.h
+      //see also: states.h
   void check(); //check pin state
 };
 
