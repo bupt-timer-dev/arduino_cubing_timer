@@ -1,5 +1,6 @@
 #include "Timer.h"
 #include <Arduino.h>
+#include <LiquidCrystal_I2C.h>
 
 unsigned long Timer::getTime() {
   return millis() - begin;
@@ -36,4 +37,11 @@ String Timer::toString() {
       + (second >= 10 ? "" : "0") + String(second) + ":"
       + (duration % SECOND_MS >= 100 ? "" : "0") + (duration % SECOND_MS >= 10 ? "" : "0") + String(duration % SECOND_MS);
   return result;
+}
+
+void TimerUI::init(const LiquidCrystal_I2C& dis) {
+  reset->attachEvent(FALLING, this->t.reset);
+}
+
+void TimerUI::refresh(const LiquidCrystal_I2C& dis) {
 }

@@ -6,6 +6,8 @@
 #define SECOND_MS 1000
 
 #include <Arduino.h>
+#include <Button.h>
+#include <Display.h>
 
 class Timer {
   unsigned long begin;
@@ -18,6 +20,15 @@ class Timer {
   unsigned long stop();
   bool isTiming();
   String toString();
+};
+
+class TimerUI : public UIProvider {
+  Button *left_touch, *right_touch, *reset;
+  Timer t;
+
+  public:
+  void init(const LiquidCrystal_I2C& dis);
+  void refresh(const LiquidCrystal_I2C& dis);
 };
 
 #endif
