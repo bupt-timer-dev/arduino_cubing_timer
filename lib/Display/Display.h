@@ -27,6 +27,8 @@ class Display {
 class UIProvider {
   Display* dis;
 
+  friend void Display::show(const UIProvider&);
+  friend void Display::refresh();
   virtual void init(Display*, UIProvider*) = 0;
   virtual void refresh() = 0;
   virtual void exit() = 0;

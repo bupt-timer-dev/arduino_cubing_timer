@@ -9,7 +9,6 @@
 
 MenuUI menu;
 Display display(menu, LCD_ADDRESS, LCD_WIDTH, LCD_HIGHT);
-LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_WIDTH, LCD_HIGHT);
 
 void setup() {
   putd(POWER, HIGH);
