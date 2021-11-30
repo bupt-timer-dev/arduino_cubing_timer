@@ -8,7 +8,7 @@
 #include <Menu.h>
 
 MenuUI menu;
-Display display(menu, LCD_ADDRESS, LCD_WIDTH, LCD_HIGHT);
+Display display(menu, LCD_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
 
 void setup() {
   putd(POWER, HIGH);
