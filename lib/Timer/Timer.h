@@ -6,7 +6,7 @@
 #define SECOND_MS 1000
 
 #include <Arduino.h>
-#include <Button.h>
+#include <Devices.h>
 #include <Display.h>
 
 class Timer {
@@ -23,12 +23,17 @@ class Timer {
 };
 
 class TimerUI : public UIProvider {
-  Button *left_touch, *right_touch, *reset;
   Timer t;
+  Display* dis;
+  UIProvider* parent_ui;
 
   public:
-  void init(const LiquidCrystal_I2C& dis);
-  void refresh(const LiquidCrystal_I2C& dis);
+  void eventHandler();
+  static void resetIntf(void*);
+  static void eventHandlerIntf(void*);
+  void init(Display* _dis, UIProvider* _parent_ui);
+  void refresh();
+  void exit();
 };
 
 #endif

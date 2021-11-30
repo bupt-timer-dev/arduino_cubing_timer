@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "consts.h"
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 
@@ -19,7 +20,7 @@ void Timer::start() {
 
 unsigned long Timer::stop() {
   timing = false;
-  return this->getTime();
+  return getTime();
 }
 
 bool Timer::isTiming() {
@@ -39,9 +40,38 @@ String Timer::toString() {
   return result;
 }
 
-void TimerUI::init(const LiquidCrystal_I2C& dis) {
-  reset->attachEvent(FALLING, this->t.reset);
+void TimerUI::eventHandler() {
 }
 
-void TimerUI::refresh(const LiquidCrystal_I2C& dis) {
+void TimerUI::resetIntf(void* _obj) {
+  Timer* obj = (Timer*)_obj;
+  obj->reset();
+}
+
+void TimerUI::eventHandlerIntf(void* _obj) {
+  TimerUI* obj = (TimerUI*)_obj;
+  obj->eventHandler();
+}
+
+void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
+  dis = _dis;
+  parent_ui = _parent_ui;
+  String time = t.toString();
+  dis->lcd.setCursor(0, 0);
+  dis->lcd.print("Timer");
+  dis->lcd.setCursor(1, LCD_WIDTH - 1 - time.length());
+  dis->lcd.print(time);
+  devices::reset.attachEvent(FALLING, resetIntf, &t);
+  devices::left_touch.attachEvent(CHANGE, eventHandlerIntf, this);
+  devices::right_touch.attachEvent(CHANGE, eventHandlerIntf, this);
+}
+
+void TimerUI::refresh() {
+  String time = t.toString();
+  dis->lcd.setCursor(1, LCD_WIDTH - 1 - time.length());
+  dis->lcd.print(time);
+}
+
+void TimerUI::exit() {
+  dis->show(*parent_ui);
 }

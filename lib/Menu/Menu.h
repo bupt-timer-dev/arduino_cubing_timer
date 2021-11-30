@@ -4,9 +4,13 @@
 #include <Display.h>
 
 class MenuUI : public UIProvider {
+  Display* dis;
+  UIProvider* parent_ui;
+
   public:
-  void init(const LiquidCrystal_I2C& dis);
-  void refresh(const LiquidCrystal_I2C& dis);
+  void init(Display* _dis, UIProvider* _parent_ui);
+  void refresh();
+  void exit();
 };
 
 #endif

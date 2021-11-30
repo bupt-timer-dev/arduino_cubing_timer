@@ -1,15 +1,15 @@
-#include "consts.h"
-#include "states.h"
+#include "pins.h"
 #include "utils.h"
 #include <Arduino.h>
 #include <Button.h>
+#include <Devices.h>
 #include <Display.h>
 #include <LiquidCrystal_I2C.h>
 #include <Menu.h>
 
 MenuUI menu;
 Display display(menu, LCD_ADDRESS, LCD_WIDTH, LCD_HIGHT);
-Button left_touch(LEFT_TOUCH), right_touch(RIGHT_TOUCH), reset(RESET);
+LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_WIDTH, LCD_HIGHT);
 
 void setup() {
   putd(POWER, HIGH);
@@ -18,8 +18,6 @@ void setup() {
 }
 
 void loop() {
-  left_touch.check();
-  right_touch.check();
-  reset.check();
+  devices::check();
   display.refresh();
 }
