@@ -1,7 +1,7 @@
 #include "Timer.h"
-#include "consts.h"
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
+#include <utils.h>
 
 unsigned long Timer::getTime() {
   return millis() - begin;
@@ -40,17 +40,38 @@ String Timer::toString() {
   return result;
 }
 
-void TimerUI::eventHandler() {
+void TimerUI::touchHandler() {
+  int left_state = devices::left_touch.getState();
+  int right_state = devices::right_touch.getState();
+  if (left_state != right_state) { return; }
+  if (left_state == HIGH) {
+    putd(LED, HIGH);
+    touchPressed = millis();
+  }
+  if (left_state == LOW) {
+    putd(LED, LOW);
+    if (touchPressed && millis() - touchPressed >= START_THRESHOLD) { t.start(); }
+    touchPressed = 0;
+  }
 }
 
-void TimerUI::resetIntf(void* _obj) {
-  Timer* obj = (Timer*)_obj;
-  obj->reset();
+void TimerUI::resetHandler() {
+  int state = devices::reset.getState();
+  if (state == HIGH) { resetPressed = millis(); }
+  if (state == LOW) {
+    if (touchPressed && millis() - touchPressed < EXIT_THRESHOLD) { t.reset(); }
+    if (touchPressed && millis() - touchPressed >= EXIT_THRESHOLD) { exit(); }
+  }
 }
 
-void TimerUI::eventHandlerIntf(void* _obj) {
+void TimerUI::resetHandlerIntf(void* _obj) {
   TimerUI* obj = (TimerUI*)_obj;
-  obj->eventHandler();
+  obj->resetHandler();
+}
+
+void TimerUI::touchHandlerIntf(void* _obj) {
+  TimerUI* obj = (TimerUI*)_obj;
+  obj->touchHandler();
 }
 
 void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
@@ -59,16 +80,16 @@ void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
   String time = t.toString();
   dis->lcd.setCursor(0, 0);
   dis->lcd.print("Timer");
-  dis->lcd.setCursor(1, LCD_WIDTH - 1 - time.length());
+  dis->lcd.setCursor(LCD_HEIGHT - 1, LCD_WIDTH - 1 - time.length());
   dis->lcd.print(time);
-  devices::reset.attachEvent(FALLING, resetIntf, &t);
-  devices::left_touch.attachEvent(CHANGE, eventHandlerIntf, this);
-  devices::right_touch.attachEvent(CHANGE, eventHandlerIntf, this);
+  devices::reset.attachEvent(CHANGE, resetHandlerIntf, &t);
+  devices::left_touch.attachEvent(CHANGE, touchHandlerIntf, this);
+  devices::right_touch.attachEvent(CHANGE, touchHandlerIntf, this);
 }
 
 void TimerUI::refresh() {
   String time = t.toString();
-  dis->lcd.setCursor(1, LCD_WIDTH - 1 - time.length());
+  dis->lcd.setCursor(LCD_HEIGHT - 1, LCD_WIDTH - 1 - time.length());
   dis->lcd.print(time);
 }
 

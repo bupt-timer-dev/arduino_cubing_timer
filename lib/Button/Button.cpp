@@ -17,7 +17,7 @@ void Button::attach(int _pin) {
   state = getd(_pin);
 }
 
-void Button::attachEvent(int MODE, void (*_event)(void*), void* _obj) {
+void Button::attachEvent(int MODE, void (*_event)(void*), void* _obj = 0) {
   attached[MODE] = true;
   events[MODE] = _event;
   objs[MODE] = _obj;

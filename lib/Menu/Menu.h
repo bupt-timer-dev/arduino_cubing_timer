@@ -3,11 +3,10 @@
 
 #include <Display.h>
 
-class MenuUI : public UIProvider {
-  Display* dis;
-  UIProvider* parent_ui;
+class MenuProvider : public UIProvider {
+};
 
-  public:
+class MenuUI : public UIProvider {
   void init(Display* _dis, UIProvider* _parent_ui);
   void refresh();
   void exit();

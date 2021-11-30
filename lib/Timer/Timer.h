@@ -4,6 +4,8 @@
 #define HOUR_MS 3600000
 #define MINUTE_MS 60000
 #define SECOND_MS 1000
+#define START_THRESHOLD (2 * SECOND_MS)
+#define EXIT_THRESHOLD (5 * SECOND_MS)
 
 #include <Arduino.h>
 #include <Devices.h>
@@ -26,11 +28,12 @@ class TimerUI : public UIProvider {
   Timer t;
   Display* dis;
   UIProvider* parent_ui;
+  unsigned long touchPressed, resetPressed;
 
-  public:
-  void eventHandler();
-  static void resetIntf(void*);
-  static void eventHandlerIntf(void*);
+  void touchHandler();
+  void resetHandler();
+  static void resetHandlerIntf(void*);
+  static void touchHandlerIntf(void*);
   void init(Display* _dis, UIProvider* _parent_ui);
   void refresh();
   void exit();
