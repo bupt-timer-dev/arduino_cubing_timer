@@ -1,5 +1,6 @@
 #include "Timer.h"
 #include <Arduino.h>
+#include <Devices.h>
 #include <LiquidCrystal_I2C.h>
 #include <utils.h>
 
@@ -64,14 +65,14 @@ void TimerUI::resetHandler() {
   }
 }
 
-void TimerUI::resetHandlerIntf(void* _obj) {
-  TimerUI* obj = (TimerUI*)_obj;
-  obj->resetHandler();
-}
-
 void TimerUI::touchHandlerIntf(void* _obj) {
   TimerUI* obj = (TimerUI*)_obj;
   obj->touchHandler();
+}
+
+void TimerUI::resetHandlerIntf(void* _obj) {
+  TimerUI* obj = (TimerUI*)_obj;
+  obj->resetHandler();
 }
 
 void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
@@ -88,9 +89,11 @@ void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
 }
 
 void TimerUI::refresh() {
-  String time = t.toString();
-  dis->lcd.setCursor(LCD_HEIGHT - 1, LCD_WIDTH - 1 - time.length());
-  dis->lcd.print(time);
+  if (t.isTiming()) {
+    String time = t.toString();
+    dis->lcd.setCursor(LCD_HEIGHT - 1, LCD_WIDTH - 1 - time.length());
+    dis->lcd.print(time);
+  }
 }
 
 void TimerUI::exit() {

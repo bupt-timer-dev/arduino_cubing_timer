@@ -8,7 +8,6 @@
 #define EXIT_THRESHOLD (5 * SECOND_MS)
 
 #include <Arduino.h>
-#include <Devices.h>
 #include <Display.h>
 
 class Timer {
