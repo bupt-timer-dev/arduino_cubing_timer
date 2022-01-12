@@ -2,6 +2,7 @@
 #include <Arduino.h>
 
 void Display::init() {
+  ui.init(this, &ui);
 }
 
 void Display::show(const UIProvider& _ui) {

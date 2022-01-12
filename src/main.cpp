@@ -1,10 +1,8 @@
 #include "pins.h"
 #include "utils.h"
 #include <Arduino.h>
-#include <Button.h>
 #include <Devices.h>
 #include <Display.h>
-#include <LiquidCrystal_I2C.h>
 #include <Menu.h>
 
 MenuUI menu;

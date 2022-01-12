@@ -8,12 +8,12 @@ Button::Button() {
 
 Button::Button(int _pin) {
   pinMode(_pin, INPUT);
-  this->pin = _pin;
+  pin = _pin;
 }
 
 void Button::attach(int _pin) {
   pinMode(_pin, INPUT);
-  this->pin = _pin;
+  pin = _pin;
   state = getd(_pin);
 }
 
@@ -24,7 +24,7 @@ void Button::attachEvent(int MODE, void (*_event)(void*), void* _obj = 0) {
 }
 
 void Button::check() {
-  int _state = getd(this->pin), event;
+  int _state = getd(pin), event;
   if (_state != state) {
     delay(20);
     if (_state != state) {
