@@ -2,6 +2,8 @@
 #include <Arduino.h>
 
 void Display::init() {
+  lcd.init();
+  lcd.backlight();
   ui.init(this, &ui);
 }
 

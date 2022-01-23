@@ -26,19 +26,12 @@ void Button::attachEvent(int MODE, void (*_event)(void*), void* _obj = 0) {
 void Button::check() {
   int _state = getd(pin), event;
   if (_state != state) {
-    delay(20);
-    if (_state != state) {
-      MODE = state == HIGH ? FALLING : RISING;
-    }
-  } else if (_state == state) {
-    delay(20);
-    MODE = state == HIGH ? ONHIGH : ONLOW;
-  }
-
-  if (_state != state) {
+    event = state == HIGH ? FALLING : RISING;
     state = _state;
+  } else {
+    event = state == HIGH ? ONHIGH : ONLOW;
   }
-  (*events[MODE])(objs[MODE]);
+  if (attached[event]) { (*events[event])(objs[event]); }
 }
 
 int Button::getState() { return state; }

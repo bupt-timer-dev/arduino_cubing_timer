@@ -5,7 +5,7 @@
 #include <utils.h>
 
 unsigned long Timer::getTime() {
-  return millis() - begin;
+  return isTiming() ? millis() - begin : 0;
 }
 
 void Timer::reset() {
@@ -44,24 +44,40 @@ String Timer::toString() {
 void TimerUI::touchHandler() {
   int left_state = devices::left_touch.getState();
   int right_state = devices::right_touch.getState();
-  if (left_state != right_state) { return; }
-  if (left_state == HIGH) {
-    putd(LED, HIGH);
-    touchPressed = millis();
-  }
-  if (left_state == LOW) {
-    putd(LED, LOW);
-    if (touchPressed && millis() - touchPressed >= START_THRESHOLD) { t.start(); }
-    touchPressed = 0;
+  if (!touch_pressed) {
+    if (left_state != right_state) { return; }
+    if (left_state == HIGH) { touch_pressed = millis(); }
+  } else {
+    if ((left_state == LOW || right_state == LOW) && millis() - touch_pressed >= TRIGGER_THRESHOLD) {
+      if (t.isTiming()) {
+        touch_pressed = 0;
+        t.stop();
+      } else {
+        touch_pressed = 0;
+        t.start();
+      }
+    }
   }
 }
 
 void TimerUI::resetHandler() {
   int state = devices::reset.getState();
-  if (state == HIGH) { resetPressed = millis(); }
+  if (state == HIGH) {
+    putd(LED, HIGH);
+    reset_pressed = millis();
+  }
   if (state == LOW) {
-    if (touchPressed && millis() - touchPressed < EXIT_THRESHOLD) { t.reset(); }
-    if (touchPressed && millis() - touchPressed >= EXIT_THRESHOLD) { exit(); }
+    if (t.isTiming()) { return; }
+    if (reset_pressed && millis() - reset_pressed >= TRIGGER_THRESHOLD && millis() - reset_pressed < EXIT_THRESHOLD) {
+      putd(LED, LOW);
+      reset_pressed = 0;
+      t.reset();
+    }
+    if (reset_pressed && millis() - reset_pressed >= EXIT_THRESHOLD) {
+      putd(LED, LOW);
+      reset_pressed = 0;
+      exit();
+    }
   }
 }
 
@@ -83,7 +99,7 @@ void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
   dis->lcd.print("Timer");
   dis->lcd.setCursor(LCD_HEIGHT - 1, LCD_WIDTH - 1 - time.length());
   dis->lcd.print(time);
-  devices::reset.attachEvent(CHANGE, resetHandlerIntf, &t);
+  devices::reset.attachEvent(CHANGE, resetHandlerIntf, this);
   devices::left_touch.attachEvent(CHANGE, touchHandlerIntf, this);
   devices::right_touch.attachEvent(CHANGE, touchHandlerIntf, this);
 }
