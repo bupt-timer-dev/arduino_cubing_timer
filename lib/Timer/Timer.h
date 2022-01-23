@@ -4,7 +4,7 @@
 #define HOUR_MS 3600000
 #define MINUTE_MS 60000
 #define SECOND_MS 1000
-#define TRIGGER_THRESHOLD (2 * SECOND_MS)
+#define TRIGGER_THRESHOLD (1 * SECOND_MS)
 #define EXIT_THRESHOLD (5 * SECOND_MS)
 
 #include <Arduino.h>

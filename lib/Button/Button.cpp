@@ -28,6 +28,7 @@ void Button::check() {
   if (_state != state) {
     event = state == HIGH ? FALLING : RISING;
     state = _state;
+    if (attached[CHANGE]) { (*events[CHANGE])(objs[CHANGE]); }
   } else {
     event = state == HIGH ? ONHIGH : ONLOW;
   }

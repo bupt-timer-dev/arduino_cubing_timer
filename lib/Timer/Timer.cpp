@@ -36,7 +36,7 @@ String Timer::toString() {
   second = (duration % MINUTE_MS) / SECOND_MS;
   result = (hour >= 10 ? "" : "0") + String(hour) + ":"
       + (minute >= 10 ? "" : "0") + String(minute) + ":"
-      + (second >= 10 ? "" : "0") + String(second) + ":"
+      + (second >= 10 ? "" : "0") + String(second) + "."
       + (duration % SECOND_MS >= 100 ? "" : "0") + (duration % SECOND_MS >= 10 ? "" : "0") + String(duration % SECOND_MS);
   return result;
 }
@@ -48,11 +48,11 @@ void TimerUI::touchHandler() {
     if (left_state != right_state) { return; }
     if (left_state == HIGH) { touch_pressed = millis(); }
   } else {
-    if ((left_state == LOW || right_state == LOW) && millis() - touch_pressed >= TRIGGER_THRESHOLD) {
+    if ((left_state == LOW || right_state == LOW)) {
       if (t.isTiming()) {
         touch_pressed = 0;
         t.stop();
-      } else {
+      } else if (millis() - touch_pressed >= TRIGGER_THRESHOLD) {
         touch_pressed = 0;
         t.start();
       }
@@ -97,7 +97,7 @@ void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
   String time = t.toString();
   dis->lcd.setCursor(0, 0);
   dis->lcd.print("Timer");
-  dis->lcd.setCursor(LCD_HEIGHT - 1, LCD_WIDTH - 1 - time.length());
+  dis->lcd.setCursor(LCD_WIDTH - 1 - time.length(), LCD_HEIGHT - 1);
   dis->lcd.print(time);
   devices::reset.attachEvent(CHANGE, resetHandlerIntf, this);
   devices::left_touch.attachEvent(CHANGE, touchHandlerIntf, this);
@@ -107,7 +107,7 @@ void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
 void TimerUI::refresh() {
   if (t.isTiming()) {
     String time = t.toString();
-    dis->lcd.setCursor(LCD_HEIGHT - 1, LCD_WIDTH - 1 - time.length());
+    dis->lcd.setCursor(LCD_WIDTH - 1 - time.length(), LCD_HEIGHT - 1);
     dis->lcd.print(time);
   }
 }
