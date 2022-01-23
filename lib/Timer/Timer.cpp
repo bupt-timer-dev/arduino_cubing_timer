@@ -77,6 +77,7 @@ void TimerUI::touchHandlerIntf(void* _obj) {
 void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
   dis = _dis;
   parent_ui = _parent_ui;
+  //初始化显示
   String time = t.toString();
   dis->lcd.setCursor(0, 0);
   dis->lcd.print("Timer");

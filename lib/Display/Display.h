@@ -1,7 +1,7 @@
 #ifndef __TIMER_DISPLAY__
 #define __TIMER_DISPLAY__
 
-#define LCD_ADDRESS 0x3f
+#define LCD_ADDRESS 0x27
 #define LCD_WIDTH 16
 #define LCD_HEIGHT 2
 

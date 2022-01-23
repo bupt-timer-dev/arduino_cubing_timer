@@ -11,6 +11,8 @@
 #include <Devices.h>
 #include <Display.h>
 
+
+//负责计时
 class Timer {
   unsigned long begin;
   bool timing;
@@ -21,21 +23,22 @@ class Timer {
   void start();
   unsigned long stop();
   bool isTiming();
-  String toString();
+  String toString();//时间转显示字符串
 };
 
+//显示界面，处理怎么显示和按钮
 class TimerUI : public UIProvider {
   Timer t;
   Display* dis;
   UIProvider* parent_ui;
   unsigned long touchPressed, resetPressed;
 
-  void touchHandler();
+  void touchHandler();//记录什么时候按下
   void resetHandler();
-  static void resetHandlerIntf(void*);
+  static void resetHandlerIntf(void*);//按下的时候对应的动作
   static void touchHandlerIntf(void*);
   void init(Display* _dis, UIProvider* _parent_ui);
-  void refresh();
+  void refresh();//函数指针有限制，不能储存成员变量
   void exit();
 };
 
