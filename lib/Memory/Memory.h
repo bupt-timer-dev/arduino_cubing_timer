@@ -13,8 +13,8 @@ typedef uint8_t u8;
 
 class Memory
 {
-    u8 data, p;
     u16 writeAddr, readAddr;
+    u8 data, p;
 
 public:
     void writeData(u8 data);
@@ -23,6 +23,6 @@ public:
     u8 readData(void);
     u8 readData(u16 _addr);
     void readData(u16 _addr, u16 len, u8 *_p);
-};
+}; 
 
 #endif
