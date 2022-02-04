@@ -34,9 +34,9 @@ String Timer::toString() {
   hour = duration / HOUR_MS;
   minute = (duration % HOUR_MS) / MINUTE_MS;
   second = (duration % MINUTE_MS) / SECOND_MS;
-  result = (hour >= 10 ? "" : "0") + String(hour) + ":"
-      + (minute >= 10 ? "" : "0") + String(minute) + ":"
-      + (second >= 10 ? "" : "0") + String(second) + "."
+  result = (hour ? (String(hour) + ":") : String())
+      + (minute || hour ? ((minute >= 10 || !hour ? "" : "0") + String(minute) + ":") : String())
+      + (second >= 10 || (!hour && !minute) ? "" : "0") + String(second) + "."
       + (duration % SECOND_MS >= 100 ? "" : "0") + (duration % SECOND_MS >= 10 ? "" : "0") + String(duration % SECOND_MS);
   return result;
 }
