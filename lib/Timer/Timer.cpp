@@ -124,8 +124,8 @@ void TimerUI::refresh() {
 }
 
 void TimerUI::exit() {
-  devices::reset.deattachEvent(CHANGE);
-  devices::left_touch.deattachEvent(CHANGE);
-  devices::right_touch.deattachEvent(CHANGE);
+  devices::reset.detachEvent(CHANGE);
+  devices::left_touch.detachEvent(CHANGE);
+  devices::right_touch.detachEvent(CHANGE);
   dis->show(parent_ui);
 }

@@ -23,7 +23,7 @@ void Button::attachEvent(int MODE, void (*_event)(void*), void* _obj = 0) {
   objs[MODE] = _obj;
 }
 
-void Button::deattachEvent(int MODE) {
+void Button::detachEvent(int MODE) {
   attached[MODE] = false;
 }
 
