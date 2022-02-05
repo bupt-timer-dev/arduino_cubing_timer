@@ -73,14 +73,12 @@ void TimerUI::resetHandler() {
     if (reset_pressed && millis() - reset_pressed >= TRIGGER_THRESHOLD && millis() - reset_pressed < EXIT_THRESHOLD) {
       putd(LED, LOW);
       reset_pressed = 0;
-      Serial.println("Reset pressed");
       do_refresh = true;
       t.reset();
     }
     if (reset_pressed && millis() - reset_pressed >= EXIT_THRESHOLD) {
       putd(LED, LOW);
       reset_pressed = 0;
-      Serial.println("Exit pressed");
       exit();
     }
   }
