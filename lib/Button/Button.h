@@ -18,7 +18,8 @@ class Button {
 
   void attach(int _pin); // attach Buttons object to pin
   void attachEvent(int MODE, void (*_event)(void*), void*); // attach function to specific event
-      // see also: states.h
+                                                            // see also: states.h
+  void deattachEvent(int MODE);
   void check(); // check pin state
   int getState(); // get pin state
 };

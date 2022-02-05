@@ -34,10 +34,12 @@ String Timer::toString() {
   hour = duration / HOUR_MS;
   minute = (duration % HOUR_MS) / MINUTE_MS;
   second = (duration % MINUTE_MS) / SECOND_MS;
+
   result = (hour ? (String(hour) + ":") : String())
       + (minute || hour ? ((minute >= 10 || !hour ? "" : "0") + String(minute) + ":") : String())
       + (second >= 10 || (!hour && !minute) ? "" : "0") + String(second) + "."
       + (duration % SECOND_MS >= 100 ? "" : "0") + (duration % SECOND_MS >= 10 ? "" : "0") + String(duration % SECOND_MS);
+
   return result;
 }
 
@@ -71,11 +73,14 @@ void TimerUI::resetHandler() {
     if (reset_pressed && millis() - reset_pressed >= TRIGGER_THRESHOLD && millis() - reset_pressed < EXIT_THRESHOLD) {
       putd(LED, LOW);
       reset_pressed = 0;
+      Serial.println("Reset pressed");
+      do_refresh = true;
       t.reset();
     }
     if (reset_pressed && millis() - reset_pressed >= EXIT_THRESHOLD) {
       putd(LED, LOW);
       reset_pressed = 0;
+      Serial.println("Exit pressed");
       exit();
     }
   }
@@ -94,18 +99,24 @@ void TimerUI::resetHandlerIntf(void* _obj) {
 void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
   dis = _dis;
   parent_ui = _parent_ui;
+
+  do_refresh = false;
+
   String time = t.toString();
-  dis->lcd.setCursor(0, 0);
+  dis->lcd.clear();
+  dis->lcd.setCursor(5, 0);
   dis->lcd.print("Timer");
   dis->lcd.setCursor(LCD_WIDTH - 1 - time.length(), LCD_HEIGHT - 1);
   dis->lcd.print(time);
+
   devices::reset.attachEvent(CHANGE, resetHandlerIntf, this);
   devices::left_touch.attachEvent(CHANGE, touchHandlerIntf, this);
   devices::right_touch.attachEvent(CHANGE, touchHandlerIntf, this);
 }
 
 void TimerUI::refresh() {
-  if (t.isTiming()) {
+  if (t.isTiming() || do_refresh) {
+    do_refresh = false;
     String time = t.toString();
     dis->lcd.setCursor(LCD_WIDTH - 1 - time.length(), LCD_HEIGHT - 1);
     dis->lcd.print(time);
@@ -113,5 +124,8 @@ void TimerUI::refresh() {
 }
 
 void TimerUI::exit() {
-  dis->show(*parent_ui);
+  devices::reset.deattachEvent(CHANGE);
+  devices::left_touch.deattachEvent(CHANGE);
+  devices::right_touch.deattachEvent(CHANGE);
+  dis->show(parent_ui);
 }

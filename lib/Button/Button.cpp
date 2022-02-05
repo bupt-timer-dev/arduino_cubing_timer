@@ -23,8 +23,12 @@ void Button::attachEvent(int MODE, void (*_event)(void*), void* _obj = 0) {
   objs[MODE] = _obj;
 }
 
+void Button::deattachEvent(int MODE) {
+  attached[MODE] = false;
+}
+
 void Button::check() {
-  int _state = getd(pin), event;
+  int _state = getd(pin), event = 0;
   if (_state != state) {
     event = state == HIGH ? FALLING : RISING;
     state = _state;
@@ -35,4 +39,6 @@ void Button::check() {
   if (attached[event]) { (*events[event])(objs[event]); }
 }
 
-int Button::getState() { return state; }
+int Button::getState() {
+  return state;
+}

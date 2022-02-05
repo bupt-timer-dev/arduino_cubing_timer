@@ -9,13 +9,14 @@
 
 MenuUI menu;
 TimerUI timer;
-Display display(timer, LCD_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
+Display display(&menu, LCD_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
 
 void setup() {
   Serial.begin(9600);
+  Serial.println();
   putd(POWER, HIGH);
+  menu.attachSelection(&timer);
   display.init();
-  // display.show(timer);
 }
 
 void loop() {

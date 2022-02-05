@@ -10,24 +10,21 @@
 class UIProvider;
 
 class Display {
-  UIProvider& ui;
+  UIProvider* ui;
 
   public:
   LiquidCrystal_I2C lcd;
 
-  Display(UIProvider& _ui, uint8_t addr, uint8_t width, uint8_t height)
+  Display(UIProvider* _ui, uint8_t addr, uint8_t width, uint8_t height)
       : ui(_ui)
       , lcd(addr, width, height) { }
 
   void init();
-  void show(const UIProvider&);
+  void show(UIProvider*);
   void refresh();
 };
 
 class UIProvider {
-  Display* dis;
-  UIProvider* parent_ui;
-
   public:
   virtual void init(Display*, UIProvider*) = 0;
   virtual void refresh() = 0;

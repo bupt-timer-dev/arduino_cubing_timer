@@ -9,6 +9,7 @@
 
 #include <Arduino.h>
 #include <Display.h>
+#include <Menu.h>
 
 class Timer {
   unsigned long begin;
@@ -23,17 +24,23 @@ class Timer {
   String toString();
 };
 
-class TimerUI : public UIProvider {
+class TimerUI : public MenuProvider {
   Timer t;
   Display* dis;
   UIProvider* parent_ui;
   unsigned long touch_pressed, reset_pressed;
+  bool do_refresh;
 
+  public:
+  TimerUI() { title = "Timer"; }
+
+  private:
   void touchHandler();
   void resetHandler();
   static void resetHandlerIntf(void*);
   static void touchHandlerIntf(void*);
-  void init(Display* _dis, UIProvider* _parent_ui);
+
+  void init(Display*, UIProvider*);
   void refresh();
   void exit();
 };
