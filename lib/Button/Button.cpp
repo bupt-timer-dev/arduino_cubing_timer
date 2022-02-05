@@ -29,14 +29,17 @@ void Button::deattachEvent(int MODE) {
 
 void Button::check() {
   int _state = getd(pin), event = 0;
+  bool event_attached;
   if (_state != state) {
     event = state == HIGH ? FALLING : RISING;
     state = _state;
+    event_attached = attached[event];
     if (attached[CHANGE]) { (*events[CHANGE])(objs[CHANGE]); }
   } else {
     event = state == HIGH ? ONHIGH : ONLOW;
+    event_attached = attached[event];
   }
-  if (attached[event]) { (*events[event])(objs[event]); }
+  if (event_attached) { (*events[event])(objs[event]); }
 }
 
 int Button::getState() {
