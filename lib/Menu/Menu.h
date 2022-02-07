@@ -1,12 +1,8 @@
 #ifndef __TIMER_MENU__
 #define __TIMER_MENU__
 
+#include "MenuProvider.h"
 #include <Display.h>
-
-class MenuProvider : public UIProvider {
-  public:
-  String title;
-};
 
 class MenuUI : public UIProvider {
   Display* dis;

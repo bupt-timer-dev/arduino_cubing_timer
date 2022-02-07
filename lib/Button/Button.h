@@ -1,5 +1,5 @@
-#ifndef __TIMER_BUTTONS__
-#define __TIMER_BUTTONS__
+#ifndef __TIMER_BUTTON__
+#define __TIMER_BUTTON__
 
 #include <Arduino.h>
 
