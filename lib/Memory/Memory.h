@@ -1,27 +1,27 @@
 #ifndef __TIMER_MEMORY__
 #define __TIMER_MEMORY__
 
-#include <Data.h>
+#include <Arduino.h>
 
-template <typename T>
 class Memory {
-  int addr;
-  size_t len;
+  int addr, len;
 
   public:
   Memory() = default;
   Memory(int _addr)
-      : addr(_addr);
+      : addr(_addr) {};
   Memory(int _begin, int _end)
       : addr(_begin)
-      , len(_end - _begin);
+      , len(_end - _begin) {};
 
-  T operator[](size_t index);
+  byte* operator[](int);
 
-  size_t length() const { return len; }
-  void erase(size_t);
-  size_t append(const T&);
-  T[] toArray() const;
+  int length() const { return len; }
+  void erase(int);
+  int append(const byte*);
+  byte** toArray() const;
+  int begin();
+  int end();
 };
 
 #endif
