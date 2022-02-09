@@ -1,28 +1,28 @@
 #ifndef __TIMER_MEMORY__
 #define __TIMER_MEMORY__
 
+#include "Preservable.h"
 #include <Arduino.h>
-#include <EEPROM.h>
 
-#define WRITE_ADDR 0xA0 //?
-#define READ_ADDR 0xA1  //?
+class Memory {
+  int addr, len;
 
-typedef uint32_t u32;
-typedef uint16_t u16;
-typedef uint8_t u8;
+  public:
+  Memory() = default;
+  Memory(int _addr)
+      : addr(_addr) {};
+  Memory(int _begin, int _end)
+      : addr(_begin)
+      , len(_end - _begin) {};
 
-class Memory
-{
-    u16 writeAddr, readAddr;
-    u8 data, p;
+  Preservable operator[](int);
 
-public:
-    void writeData(u8 data);
-    void writeData(u8 data, u8 _addr);
-    void writeData(u16 _addr, u16 len, u8 *_p);
-    u8 readData(void);
-    u8 readData(u16 _addr);
-    void readData(u16 _addr, u16 len, u8 *_p);
-}; 
+  int length() const { return len; }
+  void erase(int);
+  int append(const Preservable&);
+  Preservable* toArray() const;
+  int begin();
+  int end();
+};
 
 #endif

@@ -1,6 +1,6 @@
 #include "Button.h"
 #include <Arduino.h>
-#include <Tools.h>
+#include <utils.h>
 
 Button::Button() {
   //
@@ -23,22 +23,25 @@ void Button::attachEvent(int MODE, void (*_event)(void*), void* _obj = 0) {
   objs[MODE] = _obj;
 }
 
-void Button::check() {
-  int _state = getd(pin), event;
-  if (_state != state) {
-    delay(20);
-    if (_state != state) {
-      MODE = state == HIGH ? FALLING : RISING;
-    }
-  } else if (_state == state) {
-    delay(20);
-    MODE = state == HIGH ? ONHIGH : ONLOW;
-  }
-
-  if (_state != state) {
-    state = _state;
-  }
-  (*events[MODE])(objs[MODE]);
+void Button::detachEvent(int MODE) {
+  attached[MODE] = false;
 }
 
-int Button::getState() { return state; }
+void Button::check() {
+  int _state = getd(pin), event = 0;
+  bool event_attached;
+  if (_state != state) {
+    event = state == HIGH ? FALLING : RISING;
+    state = _state;
+    event_attached = attached[event];
+    if (attached[CHANGE]) { (*events[CHANGE])(objs[CHANGE]); }
+  } else {
+    event = state == HIGH ? ONHIGH : ONLOW;
+    event_attached = attached[event];
+  }
+  if (event_attached) { (*events[event])(objs[event]); }
+}
+
+int Button::getState() {
+  return state;
+}
