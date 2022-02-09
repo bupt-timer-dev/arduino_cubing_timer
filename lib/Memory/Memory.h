@@ -1,6 +1,7 @@
 #ifndef __TIMER_MEMORY__
 #define __TIMER_MEMORY__
 
+#include "Preservable.h"
 #include <Arduino.h>
 
 class Memory {
@@ -14,12 +15,12 @@ class Memory {
       : addr(_begin)
       , len(_end - _begin) {};
 
-  byte* operator[](int);
+  Preservable operator[](int);
 
   int length() const { return len; }
   void erase(int);
-  int append(const byte*);
-  byte** toArray() const;
+  int append(const Preservable&);
+  Preservable* toArray() const;
   int begin();
   int end();
 };

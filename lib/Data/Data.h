@@ -1,13 +1,16 @@
 #ifndef __TIMER_DATA__
 #define __TIMER_DATA__
 
-class Data {
+#include <Arduino.h>
+#include <Preservable.h>
+
+class Data : Preservable {
   unsigned long time;
-  unsigned char state;
+  byte state;
 
   public:
   Data() {};
-  Data(unsigned long _time, unsigned char _state)
+  Data(unsigned long _time, byte _state)
       : time(_time)
       , state(_state) { }
 
