@@ -1,4 +1,5 @@
 #include "Memory.h"
+<<<<<<< Updated upstream
 #include <Arduino.h>
 #include <EEPROM.h>
 
@@ -95,5 +96,40 @@ void Memory::readData(u16 _addr, u16 len, u8 *p)
 
         ++readAddr, ++p;
     }
+=======
+#include <Wire.h>
+#include <AT24Cxx.h>
+#include <RTClib.h>
+
+
+//读取EEPROM中的数据，返回EEPROM中对应位置的数据
+byte* Memory::operator[](int bytes){
+
+}
+
+//删除对应位置的数据  // 暂缓
+void Memory::erase(int bytes){
+  
+}
+
+//向存储空间末尾插入新的数据
+int Memory::append(const byte* contents){
+
+}
+
+//读取EEPROM中内容，存储到数组中并返回
+byte** Memory::toArray() const{
+
+}
+
+//返回该Memory对象的起始地址
+int Memory::begin(){
+
+}
+
+//返回该Memory对象的结束地址
+int Memory::end(){
+
+>>>>>>> Stashed changes
 }
 
