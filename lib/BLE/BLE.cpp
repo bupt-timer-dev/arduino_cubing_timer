@@ -3,7 +3,7 @@
 #include <BLE2902.h>
 #include <BLEDevice.h>
 #include <BLEUtils.h>
-#include <String.h>
+#include <String>
 
 bool TimerBLEServer::BLEConnected = false;
 
