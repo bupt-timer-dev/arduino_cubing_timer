@@ -8,6 +8,10 @@ unsigned long Timer::getTime() {
   return isTiming() ? millis() - begin : 0;
 }
 
+unsigned long Timer::getLastTime() {
+  return time;
+}
+
 void Timer::reset() {
   timing = false;
   begin = 0;
@@ -21,6 +25,7 @@ void Timer::start() {
 
 unsigned long Timer::stop() {
   timing = false;
+  time = millis() - begin;
   return getTime();
 }
 
@@ -44,19 +49,23 @@ String Timer::toString() {
 }
 
 void TimerUI::touchHandler() {
-  int left_state = devices::left_touch.getState();
-  int right_state = devices::right_touch.getState();
+  int leftState = devices::leftTouch.getState();
+  int rightState = devices::rightTouch.getState();
   if (!touch_pressed) {
-    if (left_state != right_state) { return; }
-    if (left_state == HIGH) { touch_pressed = millis(); }
+    if (leftState != rightState) { return; }
+    if (leftState == HIGH) { touch_pressed = millis(); }
   } else {
-    if ((left_state == LOW || right_state == LOW)) {
+    if ((leftState == LOW || rightState == LOW)) {
       if (t.isTiming()) {
         touch_pressed = 0;
         t.stop();
+        devices::timingData.save(t.getTime());
+        devices::ble.setTiming(0);
+        devices::ble.setTime(t.getTime());
       } else if (millis() - touch_pressed >= TRIGGER_THRESHOLD) {
         touch_pressed = 0;
         t.start();
+        devices::ble.setTiming(1);
       }
     }
   }
@@ -108,8 +117,8 @@ void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
   dis->lcd.print(time);
 
   devices::reset.attachEvent(CHANGE, resetHandlerIntf, this);
-  devices::left_touch.attachEvent(CHANGE, touchHandlerIntf, this);
-  devices::right_touch.attachEvent(CHANGE, touchHandlerIntf, this);
+  devices::leftTouch.attachEvent(CHANGE, touchHandlerIntf, this);
+  devices::rightTouch.attachEvent(CHANGE, touchHandlerIntf, this);
 }
 
 void TimerUI::refresh() {
@@ -118,12 +127,13 @@ void TimerUI::refresh() {
     String time = t.toString();
     dis->lcd.setCursor(LCD_WIDTH - 1 - time.length(), LCD_HEIGHT - 1);
     dis->lcd.print(time);
+    if (TimerBLEServer::BLEConnected) { devices::ble.setTime(t.isTiming() ? t.getTime() : 0); }
   }
 }
 
 void TimerUI::exit() {
   devices::reset.detachEvent(CHANGE);
-  devices::left_touch.detachEvent(CHANGE);
-  devices::right_touch.detachEvent(CHANGE);
+  devices::leftTouch.detachEvent(CHANGE);
+  devices::rightTouch.detachEvent(CHANGE);
   dis->show(parent_ui);
 }

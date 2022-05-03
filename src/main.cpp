@@ -9,15 +9,15 @@
 
 MenuUI menu;
 TimerUI timer;
-Shutdown shutdown;
 Display display(&menu, LCD_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
 
 void setup() {
+  if (getd(POWER) == HIGH) { putd(POWER, HIGH); }
   Serial.begin(9600);
   Serial.println();
-  putd(POWER, HIGH);
   menu.attachSelection(&timer);
-  menu.attachSelection(&shutdown);
+  menu.attachSelection(Shutdown::getInstance());
+  devices::ble.init("Arduino Cubing Timer");
   display.init();
 }
 

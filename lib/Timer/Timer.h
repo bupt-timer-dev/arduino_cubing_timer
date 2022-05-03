@@ -12,11 +12,12 @@
 #include <Menu.h>
 
 class Timer {
-  unsigned long begin;
+  unsigned long begin, time;
   bool timing;
 
   public:
   unsigned long getTime();
+  unsigned long getLastTime();
   void reset();
   void start();
   unsigned long stop();
@@ -39,6 +40,8 @@ class TimerUI : public MenuProvider {
   void resetHandler();
   static void resetHandlerIntf(void*);
   static void touchHandlerIntf(void*);
+
+  void save(unsigned long);
 
   void init(Display*, UIProvider*);
   void refresh();

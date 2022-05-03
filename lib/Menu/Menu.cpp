@@ -6,8 +6,8 @@ void MenuUI::enter() {
   Serial.println("MenuUI::enter");
   if (selection_count) {
     devices::reset.detachEvent(FALLING);
-    devices::left_touch.detachEvent(FALLING);
-    devices::right_touch.detachEvent(FALLING);
+    devices::leftTouch.detachEvent(FALLING);
+    devices::rightTouch.detachEvent(FALLING);
     dis->show(selections[now]);
   }
 }
@@ -63,8 +63,8 @@ void MenuUI::init(Display* _dis, UIProvider* _parent_ui) {
   }
 
   devices::reset.attachEvent(FALLING, enterIntf, this);
-  devices::left_touch.attachEvent(FALLING, previousIntf, this);
-  devices::right_touch.attachEvent(FALLING, nextIntf, this);
+  devices::leftTouch.attachEvent(FALLING, previousIntf, this);
+  devices::rightTouch.attachEvent(FALLING, nextIntf, this);
 }
 
 void MenuUI::refresh() {
@@ -88,8 +88,8 @@ void MenuUI::refresh() {
 
 void MenuUI::exit() {
   devices::reset.detachEvent(FALLING);
-  devices::left_touch.detachEvent(FALLING);
-  devices::right_touch.detachEvent(FALLING);
+  devices::leftTouch.detachEvent(FALLING);
+  devices::rightTouch.detachEvent(FALLING);
   dis->show(parent_ui);
 }
 

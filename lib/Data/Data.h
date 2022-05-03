@@ -1,23 +1,24 @@
 #ifndef __TIMER_DATA__
 #define __TIMER_DATA__
 
+#include <AT24Cxx.h>
 #include <Arduino.h>
-#include <Preservable.h>
 
-class Data : Preservable {
-  unsigned long time;
-  byte state;
+class Data {
+  AT24Cxx* eep;
+  unsigned long eep_addr, eep_len, len;
 
   public:
-  Data() {};
-  Data(unsigned long _time, byte _state)
-      : time(_time)
-      , state(_state) { }
+  Data() = default;
+  Data(AT24Cxx* _eep, int eep_start) {
+    eep = _eep;
+    eep_addr = eep_start;
+  }
 
-  unsigned long getTime() const { return time; }
-  unsigned char getState() const { return state; }
-  void setTime(unsigned long _time) { time = _time; }
-  void setState(unsigned char _state) { state = _state; }
+  const unsigned long operator[](const int);
+
+  unsigned long save(unsigned long);
+  void load();
 };
 
 #endif

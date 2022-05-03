@@ -1,11 +1,19 @@
 #include "Devices.h"
+#include <BLE.h>
 #include <Button.h>
+#include <Data.h>
 #include <utils.h>
 
-Button devices::left_touch(LEFT_TOUCH), devices::right_touch(RIGHT_TOUCH), devices::reset(RESET);
+namespace devices {
+Button leftTouch(LEFT_TOUCH), rightTouch(RIGHT_TOUCH), reset(RESET);
+AT24Cxx eep(EEP_ADDRESS, EEP_SIZE);
+Data timingData(&eep, 2 * 1024);
+TimerBLEServer ble;
+bool BLE_connected = false;
 
-void devices::check() {
-  left_touch.check();
-  right_touch.check();
+void check() {
+  leftTouch.check();
+  rightTouch.check();
   reset.check();
+}
 }
