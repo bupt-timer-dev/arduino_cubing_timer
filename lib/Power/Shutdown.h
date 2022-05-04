@@ -1,5 +1,5 @@
-#ifndef __TIMER_POWER__
-#define __TIMER_POWER__
+#ifndef __TIMER_SHUTDOWN__
+#define __TIMER_SHUTDOWN__
 
 #define POWER 14
 

@@ -9,15 +9,17 @@
 #define EEP_SIZE 256
 
 #include <AT24Cxx.h>
-#include <BLE.h>
 #include <Button.h>
 #include <Data.h>
+#include <Display.h>
+#include <Timer.h>
 
 namespace devices {
 extern Button leftTouch, rightTouch, reset;
 extern AT24Cxx eep;
 extern Data timingData;
-extern TimerBLEServer ble;
+extern Timer t;
+extern Display display;
 
 void check();
 }

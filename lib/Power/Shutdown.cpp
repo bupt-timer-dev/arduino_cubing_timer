@@ -1,5 +1,5 @@
+#include "Shutdown.h"
 #include <Arduino.h>
-#include <Power.h>
 #include <utils.h>
 
 Shutdown* Shutdown::instance = NULL;

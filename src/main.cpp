@@ -1,15 +1,14 @@
 #include <Arduino.h>
+#include <BLE.h>
 #include <Devices.h>
 #include <Display.h>
-#include <LiquidCrystal_I2C.h>
-#include <Menu.h>
-#include <Power.h>
-#include <Timer.h>
+#include <MenuUI.h>
+#include <Shutdown.h>
+#include <TimerUI.h>
 #include <utils.h>
 
 MenuUI menu;
-TimerUI timer;
-Display display(&menu, LCD_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
+TimerUI timer(&devices::t);
 
 void setup() {
   if (getd(POWER) == HIGH) { putd(POWER, HIGH); }
@@ -17,11 +16,11 @@ void setup() {
   Serial.println();
   menu.attachSelection(&timer);
   menu.attachSelection(Shutdown::getInstance());
-  devices::ble.init("Arduino Cubing Timer");
-  display.init();
+  devices::display.init(&menu);
+  TimerBLEServer::init("Arduino Cubing Timer");
 }
 
 void loop() {
   devices::check();
-  display.refresh();
+  devices::display.refresh();
 }

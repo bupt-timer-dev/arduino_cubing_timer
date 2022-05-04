@@ -2,9 +2,14 @@
 #include <Arduino.h>
 #include <BLE2902.h>
 #include <BLEDevice.h>
+#include <BLEServer.h>
 #include <BLEUtils.h>
+#include <Devices.h>
 #include <String>
 
+BLECharacteristic *TimerBLEServer::pTiming = NULL, *TimerBLEServer::pTime = NULL;
+BLEServer* TimerBLEServer::pServer = NULL;
+BLEService* TimerBLEServer::pService = NULL;
 bool TimerBLEServer::BLEConnected = false;
 
 void TimerServerCallbacks::onConnect(BLEServer* pServer) {
@@ -13,37 +18,40 @@ void TimerServerCallbacks::onConnect(BLEServer* pServer) {
 
 void TimerServerCallbacks::onDisconnect(BLEServer* pServer) {
   TimerBLEServer::BLEConnected = false;
+  pServer->getAdvertising()->start();
 }
 
 void TimerCallbacks::onWrite(BLECharacteristic* pCharacteristic) {
   std::string timingValue = pCharacteristic->getValue();
+  if (timingValue[0] == '0' && devices::t.isTiming()) { devices::t.stop(); }
+  if (timingValue[0] == '1' && !devices::t.isTiming()) { devices::t.start(); }
 }
 
 void TimerBLEServer::init(String name) {
   TimerBLEServer::BLEConnected = false;
   BLEDevice::init(name.c_str());
 
-  BLEServer* pServer = BLEDevice::createServer();
+  pServer = BLEDevice::createServer();
   pServer->setCallbacks(new TimerServerCallbacks());
 
-  BLEService* pService = pServer->createService(SERVICE_UUID);
+  pService = pServer->createService(SERVICE_UUID);
 
-  timing = pService->createCharacteristic(CHARACTERISTIC_UUID_TIMING, BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
-  timing->addDescriptor(new BLE2902());
-  timing->setCallbacks(new TimerCallbacks());
+  pTiming = pService->createCharacteristic(CHARACTERISTIC_UUID_TIMING, BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+  pTiming->addDescriptor(new BLE2902());
+  pTiming->setCallbacks(new TimerCallbacks());
 
-  time = pService->createCharacteristic(CHARACTERISTIC_UUID_TIME, BLECharacteristic::PROPERTY_READ);
-  time->addDescriptor(new BLE2902());
+  pTime = pService->createCharacteristic(CHARACTERISTIC_UUID_TIME, BLECharacteristic::PROPERTY_READ);
+  pTime->addDescriptor(new BLE2902());
 
   pService->start();
   pServer->getAdvertising()->start();
 }
 
 void TimerBLEServer::setTiming(int b) {
-  timing->setValue(b);
-  timing->notify();
+  pTiming->setValue(b);
+  pTiming->notify();
 }
 
 void TimerBLEServer::setTime(uint32_t t) {
-  time->setValue(t);
+  pTime->setValue(t);
 }

@@ -15,11 +15,11 @@ class Display {
   public:
   LiquidCrystal_I2C lcd;
 
-  Display(UIProvider* _ui, uint8_t addr, uint8_t width, uint8_t height)
-      : ui(_ui)
+  Display(uint8_t addr, uint8_t width, uint8_t height)
+      : ui(NULL)
       , lcd(addr, width, height) { }
 
-  void init();
+  void init(UIProvider*);
   void show(UIProvider*);
   void refresh();
 };

@@ -1,5 +1,5 @@
-#ifndef __TIMER_MENU__
-#define __TIMER_MENU__
+#ifndef __TIMER_MENU_UI__
+#define __TIMER_MENU_UI__
 
 #include "MenuProvider.h"
 #include <Display.h>
