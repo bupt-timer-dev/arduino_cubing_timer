@@ -9,23 +9,27 @@
 void TimerUI::touchHandler() {
   int leftState = devices::leftTouch.getState();
   int rightState = devices::rightTouch.getState();
-  if (!touch_pressed) {
+  if (!touchPressed) {
     if (leftState != rightState) { return; }
-    if (leftState == HIGH) { touch_pressed = millis(); }
+    if (leftState == HIGH) {
+      touchTime = millis();
+      touchPressed = true;
+    }
   } else {
-    if ((leftState == LOW || rightState == LOW)) {
+    if (leftState == LOW || rightState == LOW) {
       if (t->isTiming()) {
-        touch_pressed = 0;
         t->stop();
-        devices::timingData.save(t->getTime());
-        TimerBLEServer::setTiming(0);
-        TimerBLEServer::setTime(t->getTime());
-      } else if (millis() - touch_pressed >= TRIGGER_THRESHOLD) {
-        touch_pressed = 0;
+        // devices::timingData.save(t->getTime());
+        if (TimerBLEServer::BLEConnected) {
+          TimerBLEServer::setTiming(0);
+          TimerBLEServer::setTime(t->getTime());
+        }
+      } else if (millis() - touchTime >= TRIGGER_THRESHOLD) {
         t->start();
-        TimerBLEServer::setTiming(1);
+        if (TimerBLEServer::BLEConnected) { TimerBLEServer::setTiming(1); }
       }
     }
+    touchPressed = false;
   }
 }
 
@@ -33,20 +37,19 @@ void TimerUI::resetHandler() {
   int state = devices::reset.getState();
   if (state == HIGH) {
     putd(LED, HIGH);
-    reset_pressed = millis();
+    resetTime = millis();
+    resetPressed = true;
   }
   if (state == LOW) {
+    putd(LED, LOW);
     if (t->isTiming()) { return; }
-    if (reset_pressed && millis() - reset_pressed >= TRIGGER_THRESHOLD && millis() - reset_pressed < EXIT_THRESHOLD) {
-      putd(LED, LOW);
-      reset_pressed = 0;
-      do_refresh = true;
-      t->reset();
-    }
-    if (reset_pressed && millis() - reset_pressed >= EXIT_THRESHOLD) {
-      putd(LED, LOW);
-      reset_pressed = 0;
-      exit();
+    if (resetPressed) {
+      if (millis() - resetTime >= TRIGGER_THRESHOLD && millis() - resetTime < EXIT_THRESHOLD) { t->reset(); }
+      if (millis() - resetTime >= EXIT_THRESHOLD) {
+        t->reset();
+        exit();
+      }
+      resetPressed = false;
     }
   }
 }
@@ -61,17 +64,18 @@ void TimerUI::resetHandlerIntf(void* _obj) {
   obj->resetHandler();
 }
 
-void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
+void TimerUI::init(Display* _dis, UIProvider* _parentUI) {
   dis = _dis;
-  parent_ui = _parent_ui;
+  parentUI = _parentUI;
 
-  do_refresh = false;
+  touchPressed = false;
+  resetPressed = false;
 
   String time = t->toString();
   dis->lcd.clear();
   dis->lcd.setCursor(5, 0);
   dis->lcd.print("Timer");
-  dis->lcd.setCursor(LCD_WIDTH - 1 - time.length(), LCD_HEIGHT - 1);
+  dis->lcd.setCursor(LCD_WIDTH - time.length(), LCD_HEIGHT - 1);
   dis->lcd.print(time);
 
   devices::reset.attachEvent(CHANGE, resetHandlerIntf, this);
@@ -80,12 +84,16 @@ void TimerUI::init(Display* _dis, UIProvider* _parent_ui) {
 }
 
 void TimerUI::refresh() {
-  if (t->isTiming() || do_refresh) {
-    do_refresh = false;
+  if (t->refresh) {
+    dis->lcd.setCursor(0, LCD_HEIGHT - 1);
+    dis->lcd.print("                ");
+  }
+  if (t->isTiming() || t->refresh) {
+    t->refresh = false;
     String time = t->toString();
-    dis->lcd.setCursor(LCD_WIDTH - 1 - time.length(), LCD_HEIGHT - 1);
+    dis->lcd.setCursor(LCD_WIDTH - time.length(), LCD_HEIGHT - 1);
     dis->lcd.print(time);
-    if (TimerBLEServer::BLEConnected) { TimerBLEServer::setTime(t->getTime()); }
+    if (TimerBLEServer::BLEConnected && t->isTiming()) { TimerBLEServer::setTime(t->getTime()); }
   }
 }
 
@@ -93,5 +101,5 @@ void TimerUI::exit() {
   devices::reset.detachEvent(CHANGE);
   devices::leftTouch.detachEvent(CHANGE);
   devices::rightTouch.detachEvent(CHANGE);
-  dis->show(parent_ui);
+  dis->show(parentUI);
 }

@@ -9,9 +9,9 @@ void Display::init(UIProvider* _ui) {
 }
 
 void Display::show(UIProvider* _ui) {
-  UIProvider* parent_ui = ui;
+  UIProvider* parentUI = ui;
   ui = _ui;
-  ui->init(this, parent_ui);
+  ui->init(this, parentUI);
 }
 
 void Display::refresh() {

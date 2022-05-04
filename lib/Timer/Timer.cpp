@@ -2,12 +2,17 @@
 #include <Arduino.h>
 
 unsigned long Timer::getTime() {
-  return isTiming() ? millis() - begin : time;
+  return isTiming() ? millis() - begin : 0;
+}
+
+unsigned long Timer::getLastTime() {
+  return time;
 }
 
 void Timer::reset() {
   timing = false;
   begin = 0;
+  refresh = true;
 }
 
 void Timer::start() {

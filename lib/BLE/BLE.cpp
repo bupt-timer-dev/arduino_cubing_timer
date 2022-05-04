@@ -5,7 +5,6 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <Devices.h>
-#include <String>
 
 BLECharacteristic *TimerBLEServer::pTiming = NULL, *TimerBLEServer::pTime = NULL;
 BLEServer* TimerBLEServer::pServer = NULL;
@@ -23,8 +22,8 @@ void TimerServerCallbacks::onDisconnect(BLEServer* pServer) {
 
 void TimerCallbacks::onWrite(BLECharacteristic* pCharacteristic) {
   std::string timingValue = pCharacteristic->getValue();
-  if (timingValue[0] == '0' && devices::t.isTiming()) { devices::t.stop(); }
-  if (timingValue[0] == '1' && !devices::t.isTiming()) { devices::t.start(); }
+  if (byte(timingValue[0]) == 0 && devices::t.isTiming()) { devices::t.stop(); }
+  if (byte(timingValue[0]) == 1 && !devices::t.isTiming()) { devices::t.start(); }
 }
 
 void TimerBLEServer::init(String name) {

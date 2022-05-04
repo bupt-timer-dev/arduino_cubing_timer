@@ -6,10 +6,10 @@
 
 class MenuUI : public UIProvider {
   Display* dis;
-  UIProvider* parent_ui;
+  UIProvider* parentUI;
   MenuProvider* selections[50];
-  int selection_count, now;
-  bool do_refresh;
+  int selectionCount, now;
+  bool doRefresh;
 
   static void enterIntf(void*);
   static void previousIntf(void*);

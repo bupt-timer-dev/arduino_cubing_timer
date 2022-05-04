@@ -1,6 +1,12 @@
 #ifndef __TIMER_TIMER_UI__
 #define __TIMER_TIMER_UI__
 
+#define HOUR_MS 3600000
+#define MINUTE_MS 60000
+#define SECOND_MS 1000
+#define TRIGGER_THRESHOLD (1 * SECOND_MS)
+#define EXIT_THRESHOLD (3 * SECOND_MS)
+
 #include <Display.h>
 #include <MenuProvider.h>
 #include <Timer.h>
@@ -8,9 +14,9 @@
 class TimerUI : public MenuProvider {
   Timer* t;
   Display* dis;
-  UIProvider* parent_ui;
-  unsigned long touch_pressed, reset_pressed;
-  bool do_refresh;
+  UIProvider* parentUI;
+  unsigned long touchTime, resetTime;
+  bool touchPressed, resetPressed;
 
   public:
   TimerUI() {

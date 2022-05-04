@@ -3,8 +3,7 @@
 #include <Devices.h>
 
 void MenuUI::enter() {
-  Serial.println("MenuUI::enter");
-  if (selection_count) {
+  if (selectionCount) {
     devices::reset.detachEvent(FALLING);
     devices::leftTouch.detachEvent(FALLING);
     devices::rightTouch.detachEvent(FALLING);
@@ -13,16 +12,16 @@ void MenuUI::enter() {
 }
 
 void MenuUI::previous() {
-  if (selection_count) {
-    now = (now - 1 + selection_count) % selection_count;
-    do_refresh = true;
+  if (selectionCount) {
+    now = (now - 1 + selectionCount) % selectionCount;
+    doRefresh = true;
   }
 }
 
 void MenuUI::next() {
-  if (selection_count) {
-    now = (now + 1) % selection_count;
-    do_refresh = true;
+  if (selectionCount) {
+    now = (now + 1) % selectionCount;
+    doRefresh = true;
   }
 }
 
@@ -41,18 +40,17 @@ void MenuUI::nextIntf(void* _obj) {
   obj->next();
 }
 
-void MenuUI::init(Display* _dis, UIProvider* _parent_ui) {
-  Serial.println("MenuUI::init");
+void MenuUI::init(Display* _dis, UIProvider* _parentUI) {
   dis = _dis;
-  parent_ui = _parent_ui;
+  parentUI = _parentUI;
   now = 0;
-  do_refresh = false;
+  doRefresh = false;
 
   dis->lcd.clear();
   dis->lcd.setCursor(6, 0);
   dis->lcd.print("Menu");
   dis->lcd.setCursor(0, LCD_HEIGHT - 1);
-  if (selection_count) {
+  if (selectionCount) {
     dis->lcd.print("<");
     dis->lcd.setCursor((LCD_WIDTH - selections[now]->title.length()) / 2, LCD_HEIGHT - 1);
     dis->lcd.print(selections[now]->title); // TODO Use scrolling words to display long titles
@@ -68,13 +66,13 @@ void MenuUI::init(Display* _dis, UIProvider* _parent_ui) {
 }
 
 void MenuUI::refresh() {
-  if (do_refresh) {
-    do_refresh = false;
+  if (doRefresh) {
+    doRefresh = false;
     dis->lcd.clear();
     dis->lcd.setCursor(6, 0);
     dis->lcd.print("Menu");
     dis->lcd.setCursor(0, LCD_HEIGHT - 1);
-    if (selection_count) {
+    if (selectionCount) {
       dis->lcd.print("<");
       dis->lcd.setCursor((LCD_WIDTH - selections[now]->title.length()) / 2, LCD_HEIGHT - 1);
       dis->lcd.print(selections[now]->title); // TODO Use scrolling words to display long titles
@@ -90,9 +88,9 @@ void MenuUI::exit() {
   devices::reset.detachEvent(FALLING);
   devices::leftTouch.detachEvent(FALLING);
   devices::rightTouch.detachEvent(FALLING);
-  dis->show(parent_ui);
+  dis->show(parentUI);
 }
 
 void MenuUI::attachSelection(MenuProvider* _selection) {
-  selections[selection_count++] = _selection;
+  selections[selectionCount++] = _selection;
 }
