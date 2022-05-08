@@ -10,6 +10,15 @@ void TimerUI::touchHandler() {
   int leftState = devices::leftTouch.getState();
   int rightState = devices::rightTouch.getState();
   if (!touchPressed) {
+    if (t->isTiming()) {
+      t->stop();
+      // devices::timingData.save(t->getTime());
+      if (TimerBLEServer::BLEConnected) {
+        TimerBLEServer::setTiming(0);
+        TimerBLEServer::setTime(t->getTime());
+      }
+      return;
+    }
     if (leftState != rightState) { return; }
     if (leftState == HIGH) {
       touchTime = millis();
@@ -17,16 +26,11 @@ void TimerUI::touchHandler() {
     }
   } else {
     if (leftState == LOW || rightState == LOW) {
-      if (t->isTiming()) {
-        t->stop();
-        // devices::timingData.save(t->getTime());
-        if (TimerBLEServer::BLEConnected) {
-          TimerBLEServer::setTiming(0);
-          TimerBLEServer::setTime(t->getTime());
+      if (!t->isTiming()) {
+        if (millis() - touchTime >= TRIGGER_THRESHOLD) {
+          t->start();
+          if (TimerBLEServer::BLEConnected) { TimerBLEServer::setTiming(1); }
         }
-      } else if (millis() - touchTime >= TRIGGER_THRESHOLD) {
-        t->start();
-        if (TimerBLEServer::BLEConnected) { TimerBLEServer::setTiming(1); }
       }
     }
     touchPressed = false;
