@@ -28,8 +28,8 @@ void TimerUI::startHandler() {
 
 void TimerUI::stopHandler() {
   if (t->isTiming()) {
-    unsigned long tmp = t->getTime();
-    t->stop();
+    unsigned long tmp = t->stop();
+    t->refresh = true;
     // devices::timingData.save(tmp);
     if (TimerBLEServer::BLEConnected) {
       TimerBLEServer::setTiming(0);

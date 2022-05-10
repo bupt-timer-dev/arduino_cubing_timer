@@ -24,7 +24,7 @@ void Timer::start() {
 unsigned long Timer::stop() {
   timing = false;
   time = millis() - begin;
-  return getTime();
+  return time;
 }
 
 bool Timer::isTiming() {
@@ -32,7 +32,7 @@ bool Timer::isTiming() {
 }
 
 String Timer::toString() {
-  unsigned long duration = this->getTime(), hour, minute, second;
+  unsigned long duration = isTiming() ? getTime() : time, hour, minute, second;
   String result;
   hour = duration / HOUR_MS;
   minute = (duration % HOUR_MS) / MINUTE_MS;
