@@ -11,12 +11,12 @@ void TimerUI::touchHandler() {
   int rightState = devices::rightTouch.getState();
   if (!touchPressed) {
     if (t->isTiming()) {
-      t->stop();
       // devices::timingData.save(t->getTime());
       if (TimerBLEServer::BLEConnected) {
         TimerBLEServer::setTiming(0);
         TimerBLEServer::setTime(t->getTime());
       }
+      t->stop();
       return;
     }
     if (leftState != rightState) { return; }

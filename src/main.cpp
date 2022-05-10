@@ -8,13 +8,12 @@
 #include <utils.h>
 
 MenuUI menu;
-TimerUI timer(&devices::t);
 
 void setup() {
   if (getd(POWER) == HIGH) { putd(POWER, HIGH); }
   Serial.begin(9600);
   Serial.println();
-  menu.attachSelection(&timer);
+  menu.attachSelection(new TimerUI(&devices::t));
   menu.attachSelection(Shutdown::getInstance());
   devices::display.init(&menu);
   TimerBLEServer::init("Arduino Cubing Timer");
