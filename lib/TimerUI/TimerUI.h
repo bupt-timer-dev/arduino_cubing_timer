@@ -29,10 +29,12 @@ class TimerUI : public MenuProvider {
   }
 
   private:
-  void touchHandler();
+  void startHandler();
+  void stopHandler();
   void resetHandler();
   static void resetHandlerIntf(void*);
-  static void touchHandlerIntf(void*);
+  static void startHandlerIntf(void*);
+  static void stopHandlerIntf(void*);
 
   void save(unsigned long);
 

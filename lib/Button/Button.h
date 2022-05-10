@@ -6,8 +6,8 @@
 #define MODE_SIZE 6
 
 /*
- *Attention: Do not attach both CHANGE and RISING/FALLING events at the same time.
- *           This may cause unexpected behavior.
+ *Attention: When both CHANGE and RISING/FALLING events are attached at the same time.
+ *           CHANGE event will be triggered first.
  */
 
 class Button {

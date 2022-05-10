@@ -6,19 +6,10 @@
 #include <Timer.h>
 #include <utils.h>
 
-void TimerUI::touchHandler() {
+void TimerUI::startHandler() {
   int leftState = devices::leftTouch.getState();
   int rightState = devices::rightTouch.getState();
   if (!touchPressed) {
-    if (t->isTiming()) {
-      // devices::timingData.save(t->getTime());
-      if (TimerBLEServer::BLEConnected) {
-        TimerBLEServer::setTiming(0);
-        TimerBLEServer::setTime(t->getTime());
-      }
-      t->stop();
-      return;
-    }
     if (leftState != rightState) { return; }
     if (leftState == HIGH) {
       touchTime = millis();
@@ -26,14 +17,24 @@ void TimerUI::touchHandler() {
     }
   } else {
     if (leftState == LOW || rightState == LOW) {
-      if (!t->isTiming()) {
-        if (millis() - touchTime >= TRIGGER_THRESHOLD) {
-          t->start();
-          if (TimerBLEServer::BLEConnected) { TimerBLEServer::setTiming(1); }
-        }
+      if (!t->isTiming() && millis() - touchTime >= TRIGGER_THRESHOLD) {
+        t->start();
+        if (TimerBLEServer::BLEConnected) { TimerBLEServer::setTiming(1); }
       }
     }
     touchPressed = false;
+  }
+}
+
+void TimerUI::stopHandler() {
+  if (t->isTiming()) {
+    unsigned long tmp = t->getTime();
+    t->stop();
+    // devices::timingData.save(tmp);
+    if (TimerBLEServer::BLEConnected) {
+      TimerBLEServer::setTiming(0);
+      TimerBLEServer::setTime(tmp);
+    }
   }
 }
 
@@ -58,9 +59,14 @@ void TimerUI::resetHandler() {
   }
 }
 
-void TimerUI::touchHandlerIntf(void* _obj) {
+void TimerUI::startHandlerIntf(void* _obj) {
   TimerUI* obj = (TimerUI*)_obj;
-  obj->touchHandler();
+  obj->startHandler();
+}
+
+void TimerUI::stopHandlerIntf(void* _obj) {
+  TimerUI* obj = (TimerUI*)_obj;
+  obj->stopHandler();
 }
 
 void TimerUI::resetHandlerIntf(void* _obj) {
@@ -83,8 +89,10 @@ void TimerUI::init(Display* _dis, UIProvider* _parentUI) {
   dis->lcd.print(time);
 
   devices::reset.attachEvent(CHANGE, resetHandlerIntf, this);
-  devices::leftTouch.attachEvent(CHANGE, touchHandlerIntf, this);
-  devices::rightTouch.attachEvent(CHANGE, touchHandlerIntf, this);
+  devices::leftTouch.attachEvent(CHANGE, startHandlerIntf, this);
+  devices::rightTouch.attachEvent(CHANGE, startHandlerIntf, this);
+  devices::leftTouch.attachEvent(RISING, stopHandlerIntf, this);
+  devices::rightTouch.attachEvent(RISING, stopHandlerIntf, this);
 }
 
 void TimerUI::refresh() {
